@@ -28,18 +28,19 @@ def main():
     filmcomments_url , url_head , filmname = get_film_url()
     # 存储所有用户信息的列表
     user_all = []
-    # 获取评论详细数据
-    result  = get_imformation(filmcomments_url , filmname , url_head , s , user_all)
-    if result :
-        print("爬取完毕！")
-    # 进入数据存储文件夹 检查是否已经存在此文件 存在则删除
+    # 进入数据存储文件夹 检查是否已经存在此文件 存在则不必再次爬取
     os.chdir('../用户影评相关数据')
     if os.path.exists(filmname + '用户影评相关信息.json') :
-        os.remove(filmname + '用户影评相关信息.json')
+        print("已爬取过此电影的影评！")
+    else :
+        # 获取评论详细数据
+        result  = get_imformation(filmcomments_url , filmname , url_head , s , user_all)
+        print("爬取完毕！")
     # 创建该电影用户影评相关信息的txt文件
     with open (filmname + '用户影评相关信息.json' , 'a' , encoding='utf-8') as f :
-        for each in user_all :
-            f.write( json.dumps(each)+'\n' )
+        json.dump( user_all , f )
+    print("数据写入完毕!")
+
     """待完成"""
 
     

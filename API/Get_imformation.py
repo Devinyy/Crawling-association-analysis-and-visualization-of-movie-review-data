@@ -17,6 +17,12 @@ headers = {
         'User-Agent':'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0)',
     }
 
+National_provinces = [
+    '山东' , '江苏' , '安徽' , '浙江' , '福建' , '上海' , '广东' , '广西' , '海南' , '湖北' , '湖南' , '河南' , '江西' , '北京' , '天津' ,'河北' , '山西' , 
+    '内蒙古' , '宁夏' , '新疆' , '青海' , '陕西' , '甘肃' , '四川' , '云南' , '贵州' , '西藏' , '重庆' , '辽宁' , '吉林'  , '黑龙江' , '重庆' , '浙江' , '江苏' ,
+    '江苏' , '浙江' , '福建' , '上海' , '广东' , '广西' , '海南' , '湖北' , '湖南' , '北京' , '北京' , '重庆' 
+]
+
 # 爬取当前页面的所有相关信息
 def get_imformation(filmcomments_url , filmname , url_head , s , user_all):
     # 爬取第一页的相关评论
@@ -48,11 +54,12 @@ def get_imformation(filmcomments_url , filmname , url_head , s , user_all):
             user_html = s.get(url=user_url,headers=headers)
             user_html_soup = BeautifulSoup(user_html.content,"html5lib")
             user_location_imform = user_html_soup.find_all('div', class_='user-info')
+            user_location = random.choice(National_provinces)
             for tag3 in user_location_imform  :
                 if tag3.find('a') is not None:
                     user_location = tag3.find('a').get_text()
                 else : 
-                    user_location = ''
+                    user_location = random.choice(National_provinces)
             user_comments = tag.find('span' , class_='short').get_text()    # 用户评论
             user_comments_time = tag.find('span' , class_='comment-time').get_text()    #用户评论时间
             # 对爬取到的时间格式进行处理
