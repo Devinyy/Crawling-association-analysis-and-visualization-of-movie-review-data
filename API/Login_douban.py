@@ -7,7 +7,7 @@ def login_in():
     data = {
         'ck': '',
         'name': '1010732441@qq.com',
-        'password': 'zhangxiang0511',
+        'password': 'zhangxiang1234',
         'remember': 'false',
         'ticket': ''
     }

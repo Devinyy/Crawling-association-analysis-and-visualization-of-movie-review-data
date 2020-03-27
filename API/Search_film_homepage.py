@@ -13,7 +13,7 @@ import re
 
 ua_headers = { 'User-Agent':'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0)'}
 
-def get_film_url (folder = '电影搜索记录') :
+def get_film_url (s , folder = '电影搜索记录') :
     # 创建用户影评相关数据
         if os.path.exists('用户影评相关数据') :
             pass
@@ -26,9 +26,12 @@ def get_film_url (folder = '电影搜索记录') :
         # 豆瓣网电影搜索的api
         url = 'https://movie.douban.com/j/subject_suggest?q=' + filmname_url
         # 爬取到的相关电影的简介及url
-        filmname_html = requests.get(url,headers=ua_headers).content
+        filmname_html = s.get(url,headers=ua_headers).content
         # 将json格式转化为文件python格式
-        explored_data = json.loads(filmname_html)
+        try :
+            explored_data = json.loads(filmname_html)
+        except (json.decoder.JSONDecodeError) :
+            print("账号异常被封")
         # 创建文件夹
         if os.path.exists(folder) :
             os.chdir(folder)
@@ -43,7 +46,7 @@ def get_film_url (folder = '电影搜索记录') :
         filmdetails_url = explored_data[1]['url']
         filmname = explored_data[1]['title']
         # 爬取相关电影全部评论的url
-        filmdetails_html = requests.get(url=filmdetails_url,headers=ua_headers)
+        filmdetails_html = s.get(url=filmdetails_url,headers=ua_headers)
         filmdetails_soup = BeautifulSoup(filmdetails_html.content,'html5lib')
         for tag in filmdetails_soup.find_all('div', id=re.compile('comments-section')) :
             tag1 = tag.find_all('span' , class_='pl')

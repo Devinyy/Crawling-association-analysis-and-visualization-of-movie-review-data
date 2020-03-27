@@ -65,20 +65,20 @@ def get_imformation(filmcomments_url , filmname , url_head , s , user_all):
             # 对爬取到的时间格式进行处理
             user_comments_time = user_comments_time.replace(' ','')
             user_comments_time = user_comments_time.replace("\n", "")
-            user = dict({'用户名：':user_name , '用户位置：':user_location , '用户评分：':user_score , '用户推荐度：':user_recommand ,
-                              '用户评论：':user_comments , '用户评论时间':user_comments_time
+            user = dict({'用户名':user_name , '用户位置':user_location , '用户评分':user_score , '用户推荐度':user_recommand ,
+                              '用户评论':user_comments , '用户评论时间':user_comments_time
             }) 
             user_all.append(user)
-            # 设置间隔时间防止被封
-            time.sleep( random.randint(1,2))
+        # 设置间隔时间防止被封
+        time.sleep( random.randint(2,4))    
     # 检查是否有下一页
     next_url = filmcommentsdetails_soup.find('a',class_='next')
     if next_url:
         temp = next_url['href'].strip().split('&amp;') # 获取下一个url
         next_url = ''.join(temp)
     if next_url:
-        print('正在爬取' + url_head + next_url + '的数据')
         # 设置间隔时间防止被封
-        time.sleep( random.randint(4,5))
+        time.sleep( random.randint(1,3))
+        print('正在爬取' + url_head + next_url + '的数据')
         get_imformation(url_head + next_url , filmname , url_head , s , user_all)
     return True
