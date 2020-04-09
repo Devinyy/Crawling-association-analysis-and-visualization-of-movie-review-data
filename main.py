@@ -21,6 +21,10 @@ from API.Get_imformation import get_imformation
 from API.Make_wordcloud import make_wordcloud
 # 导入评论用户地图分布
 from API.Location_map import china_map
+# 导入情感分析
+from API.Sentiment_analysis import sentiment_analysis
+# 导入推荐度与日期分析
+from API.Scoring_trend_analysis import scoring_trend_analysis
 
 def main():
     """已完成"""
@@ -48,6 +52,7 @@ def main():
         with open (filmname + '用户影评相关信息.json' , 'a' , encoding='UTF-8') as f :
             json.dump( user_all , f , ensure_ascii = False)
         print("数据写入完毕!")
+        
     # 创建该电影的词云
     os.chdir(r'../爬虫数据关联可视化')
     if os.path.exists(r'./' + filmname +'影评可视化数据') :
@@ -55,6 +60,7 @@ def main():
     else :
         os.mkdir(filmname+'影评可视化数据')
     makewordcloud = make_wordcloud( filmname )
+
     # 生成用户分布图
     os.chdir(r'../爬虫数据关联可视化')
     if os.path.exists(r'./' + filmname +'影评可视化数据') :
@@ -63,7 +69,12 @@ def main():
         os.mkdir(filmname+'影评可视化数据')
     chinamap = china_map( filmname )
 
-    """待完成"""
+    # 情感分析
+    sentimentanalysis = sentiment_analysis( filmname )
+
+    #推荐度与日期分析
+    scoringtrendanalysis = scoring_trend_analysis( filmname ) 
+
 
     
 
