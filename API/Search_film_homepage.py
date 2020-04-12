@@ -31,7 +31,7 @@ def get_film_url (s , folder = '电影搜索记录') :
         try :
             explored_data = json.loads(filmname_html)
         except (json.decoder.JSONDecodeError) :
-            print("账号异常被封")
+            print("账号异常可能被封，请前往更改密码后重试")
         # 创建文件夹
         if os.path.exists(folder) :
             os.chdir(folder)

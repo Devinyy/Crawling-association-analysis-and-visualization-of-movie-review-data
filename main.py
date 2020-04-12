@@ -34,8 +34,10 @@ def main():
         os.mkdir('爬虫数据关联可视化')
     # 登陆豆瓣
     status_code , s = login_in()    # 登陆状态和cooike
-    if status_code == '200' :
+    if status_code == 'success' :
         print("登陆成功！")
+    else :
+        print("用户名或密码错误")
     # 得到用户搜索电影的首页
     filmcomments_url , url_head , filmname = get_film_url(s)
     # 存储所有用户信息的列表
@@ -52,7 +54,7 @@ def main():
         with open (filmname + '用户影评相关信息.json' , 'a' , encoding='UTF-8') as f :
             json.dump( user_all , f , ensure_ascii = False)
         print("数据写入完毕!")
-        
+    
     # 创建该电影的词云
     os.chdir(r'../爬虫数据关联可视化')
     if os.path.exists(r'./' + filmname +'影评可视化数据') :
@@ -74,7 +76,6 @@ def main():
 
     #推荐度与日期分析
     scoringtrendanalysis = scoring_trend_analysis( filmname ) 
-
 
     
 

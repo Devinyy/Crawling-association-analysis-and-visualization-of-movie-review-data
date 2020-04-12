@@ -1,4 +1,5 @@
 import requests
+import json
 
 def login_in():
     url_basic = 'https://accounts.douban.com/j/mobile/login/basic'
@@ -13,6 +14,12 @@ def login_in():
     }
 
     s = requests.session()
-    s.post(url=url_basic, headers=ua_headers, data=data)
+    # 获取登录结果（类型为 bytes）
+    login_result = s.post(url=url_basic, headers=ua_headers, data=data).content
+    # 将登录结果转化为
+    login_result_zip = json.loads(login_result)
+    login_result_status = login_result_zip['status']
+    login_result_description = login_result_zip['description']
     response = s.get(url=url, headers=ua_headers)
-    return str(response.status_code) , s
+
+    return login_result_status , s
