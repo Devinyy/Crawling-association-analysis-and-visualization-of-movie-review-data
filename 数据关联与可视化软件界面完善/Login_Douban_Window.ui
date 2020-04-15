@@ -299,7 +299,7 @@ border-radius: 60px;</string>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="remembepassword">
+      <widget class="QCheckBox" name="rememberaccount">
        <property name="text">
         <string/>
        </property>
@@ -438,7 +438,7 @@ border-radius: 60px;</string>
       </widget>
      </item>
      <item alignment="Qt::AlignLeft">
-      <widget class="QCheckBox" name="rememberaccount">
+      <widget class="QCheckBox" name="rememberpassword">
        <property name="text">
         <string/>
        </property>
