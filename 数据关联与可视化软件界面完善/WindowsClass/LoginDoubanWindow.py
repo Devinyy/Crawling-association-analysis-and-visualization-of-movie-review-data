@@ -35,6 +35,7 @@ class MyLoginWindow(QMainWindow, Login_Douban_Window.Ui_Form):
         else :
             self.passwordtext.setText(user_password)
             self.rememberpassword.setChecked(True)
+
     # 登陆函数
     def login_in(self):
         url_basic = 'https://accounts.douban.com/j/mobile/login/basic'

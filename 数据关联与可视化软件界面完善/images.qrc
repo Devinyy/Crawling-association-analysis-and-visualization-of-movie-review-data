@@ -2,6 +2,12 @@
   <qresource prefix="MainBG">
     <file>image/1.png</file>
   </qresource>
+  <qresource prefix="MainWindowicon">
+    <file>image/daochu.png</file>
+    <file>image/keshihua.png</file>
+    <file>image/pachong.png</file>
+    <file>image/tuichu.png</file>
+  </qresource>
   <qresource prefix="LoginBG">
     <file>image/loginbg.jpg</file>
   </qresource>
