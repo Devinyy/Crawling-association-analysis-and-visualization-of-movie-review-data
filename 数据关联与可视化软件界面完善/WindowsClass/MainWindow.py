@@ -1,13 +1,9 @@
-import os
-from PyQt5.QtWidgets import QMainWindow, QFileDialog , QMessageBox
+from PyQt5.QtWidgets import QMainWindow
 from Windows import Main_Window
-import requests
-import json
+
 
 # 创建登陆主界面
-class MyLoginWindow(QMainWindow, Login_Douban_Window.Ui_Form):
+class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow):
     def __init__(self, parent=None):
-        super(MyLoginWindow, self).__init__(parent)
+        super(MyMainWindow, self).__init__(parent)
         self.setupUi(self)
-        self.login.clicked.connect(self.login_in)
-        self.cancel.clicked.connect(self.close)

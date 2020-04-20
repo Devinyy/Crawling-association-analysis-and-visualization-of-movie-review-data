@@ -1,6 +1,7 @@
 import os
 from PyQt5.QtWidgets import QMainWindow, QFileDialog , QMessageBox
 from Windows import Login_Douban_Window
+from WindowsClass import MainWindow
 import configparser    # 存储用户信息表
 import requests
 import json
@@ -12,6 +13,10 @@ class MyLoginWindow(QMainWindow, Login_Douban_Window.Ui_Form):
         self.setupUi(self)
         self.login.clicked.connect(self.login_in)
         self.cancel.clicked.connect(self.close)
+
+        # 主界面实例化
+        self.mainwindow = MainWindow.MyMainWindow()
+
         '''初始化账号密码'''
         # 创建配置文件对象
         conf = configparser.ConfigParser()
@@ -103,10 +108,9 @@ class MyLoginWindow(QMainWindow, Login_Douban_Window.Ui_Form):
         login_result_description = login_result_zip['description']
         # 根据登陆状态查看是否登陆成功,如果失败显示登陆失败原因
         if login_result_status is not 'failed':
-            print("登陆成功")
             QMessageBox.information(self, '登陆结果', '登陆成功！' , QMessageBox.Yes)
+            self.mainwindow.show()
         else :
-            print("登陆失败")
             QMessageBox.warning(self, '登陆结果', login_result_description, QMessageBox.Yes)
 
-        return login_result_status, self.s
+        return self.s

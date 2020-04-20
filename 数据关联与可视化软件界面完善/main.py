@@ -16,10 +16,11 @@ class MyMainWindow(QMainWindow, Welcome_Window_Main.Ui_Form):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    # 主界面实例化
+    # 首界面实例化
     mymainwindow = MyMainWindow()
     # 登录界面实例化
     logindouban = LoginDoubanWindow.MyLoginWindow()
+
     '''***对欢迎首页添加跳转至豆瓣登陆事件***'''
     main_btn = mymainwindow.pushButton
     main_btn.clicked.connect(lambda:logindouban.show())
