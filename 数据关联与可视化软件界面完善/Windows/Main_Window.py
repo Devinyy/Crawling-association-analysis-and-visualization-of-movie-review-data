@@ -290,7 +290,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.stackedWidget.setCurrentIndex(1)
-        self.stackedWidget_2.setCurrentIndex(2)
+        self.stackedWidget_2.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -321,6 +321,5 @@ class Ui_MainWindow(object):
         self.comment_columnar.setText(_translate("MainWindow", "评论推荐度柱状"))
         self.comment_polyline.setText(_translate("MainWindow", "评论推荐度折线"))
         self.comment_river.setText(_translate("MainWindow", "评论推荐度河状"))
-
 from PyQt5 import QtWebEngineWidgets
 import images_rc

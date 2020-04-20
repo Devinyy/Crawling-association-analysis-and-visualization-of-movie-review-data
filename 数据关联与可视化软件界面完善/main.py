@@ -25,6 +25,8 @@ if __name__ == '__main__':
     main_btn = mymainwindow.pushButton
     main_btn.clicked.connect(lambda:logindouban.show())
 
+
+
     # 显示主界面
     mymainwindow.show()
 

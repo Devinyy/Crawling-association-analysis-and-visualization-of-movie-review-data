@@ -62,6 +62,8 @@ class MyLoginWindow(QMainWindow, Login_Douban_Window.Ui_Form):
             conf.set('user_imformation_detail', 'user_account', self.accounttext.text())
             # 设置上次是否记录为1
             conf.set('last_rememer_choose', 'last_user_account_choose', '1')
+            # 设置此次登陆的账号
+            conf.set('get_imformation', 'user_account', self.accounttext.text())
             # 写入config.ini文件
             with open('user_imformation.ini', 'w') as f:
                 conf.write(f)
@@ -70,6 +72,8 @@ class MyLoginWindow(QMainWindow, Login_Douban_Window.Ui_Form):
             conf.set('user_imformation_detail', 'user_account', 'Username')
             # 设置上次是否记录为0
             conf.set('last_rememer_choose', 'last_user_account_choose', '0')
+            # 设置此次登陆的账号
+            conf.set('get_imformation', 'user_account', self.accounttext.text())
             # 写入config.ini文件
             with open('user_imformation.ini', 'w') as f:
                 conf.write(f)
@@ -79,6 +83,8 @@ class MyLoginWindow(QMainWindow, Login_Douban_Window.Ui_Form):
             conf.set('user_imformation_detail', 'user_password', self.passwordtext.text())
             # 设置上次是否记录为1
             conf.set('last_rememer_choose', 'last_user_password_choose', '1')
+            # 设置此次登陆的密码
+            conf.set('get_imformation', 'user_password', self.passwordtext.text())
             # 写入config.ini文件
             with open('user_imformation.ini', 'w') as f:
                 conf.write(f)
@@ -87,6 +93,8 @@ class MyLoginWindow(QMainWindow, Login_Douban_Window.Ui_Form):
             conf.set('user_imformation_detail', 'user_password', 'Password')
             # 设置上次是否记录为0
             conf.set('last_rememer_choose', 'last_user_password_choose', '0')
+            # 设置此次登陆的密码
+            conf.set('get_imformation', 'user_password', self.passwordtext.text())
             # 写入config.ini文件
             with open('user_imformation.ini', 'w') as f:
                 conf.write(f)
@@ -112,5 +120,3 @@ class MyLoginWindow(QMainWindow, Login_Douban_Window.Ui_Form):
             self.mainwindow.show()
         else :
             QMessageBox.warning(self, '登陆结果', login_result_description, QMessageBox.Yes)
-
-        return self.s

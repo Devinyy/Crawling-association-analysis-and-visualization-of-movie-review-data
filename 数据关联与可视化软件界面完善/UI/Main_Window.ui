@@ -309,7 +309,7 @@ border-radius:15px;</string>
     <string notr="true">background-color: rgb(245, 245, 245);</string>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="get_imform_interface">
     <widget class="QLabel" name="title">
