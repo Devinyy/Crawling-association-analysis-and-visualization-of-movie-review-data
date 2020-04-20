@@ -101,7 +101,7 @@ padding-left:2px;</string>
      </brush>
     </property>
     <property name="icon">
-     <iconset resource="images.qrc">
+     <iconset>
       <normaloff>:/MainWindowicon/image/pachong.png</normaloff>:/MainWindowicon/image/pachong.png</iconset>
     </property>
    </item>
@@ -127,7 +127,7 @@ padding-left:2px;</string>
      </brush>
     </property>
     <property name="icon">
-     <iconset resource="images.qrc">
+     <iconset>
       <normaloff>:/MainWindowicon/image/keshihua.png</normaloff>:/MainWindowicon/image/keshihua.png</iconset>
     </property>
    </item>
@@ -162,7 +162,7 @@ padding-left:2px;</string>
      </brush>
     </property>
     <property name="icon">
-     <iconset resource="images.qrc">
+     <iconset>
       <normaloff>:/MainWindowicon/image/tuichu.png</normaloff>:/MainWindowicon/image/tuichu.png</iconset>
     </property>
    </item>
@@ -180,7 +180,7 @@ padding-left:2px;</string>
     <string notr="true">background-color: rgb(97, 103, 157);</string>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="data_scrap">
     <widget class="QPushButton" name="get_imform_btn">
@@ -647,8 +647,6 @@ color: rgb(255, 255, 255);</string>
    <header>QtWebKitWidgets/QWebView</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
