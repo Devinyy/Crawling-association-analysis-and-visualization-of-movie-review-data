@@ -9,7 +9,7 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
     def __init__(self, parent=None):
         super(MyMainWindow, self).__init__(parent)
         self.setupUi(self)
-
+        self.setFixedSize(self.width(), self.height())
         '''取得有账号缓存的sessions'''
         # 创建配置文件对象
         conf = configparser.ConfigParser()

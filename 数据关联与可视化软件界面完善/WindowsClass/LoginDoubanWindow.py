@@ -1,5 +1,5 @@
 import os
-from PyQt5.QtWidgets import QMainWindow, QFileDialog , QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QMessageBox
 from Windows import Login_Douban_Window
 from WindowsClass import MainWindow
 import configparser    # 存储用户信息表
@@ -13,7 +13,7 @@ class MyLoginWindow(QMainWindow, Login_Douban_Window.Ui_Form):
         self.setupUi(self)
         self.login.clicked.connect(self.login_in)
         self.cancel.clicked.connect(self.close)
-
+        self.setFixedSize(self.width(), self.height())
         # 主界面实例化
         self.mainwindow = MainWindow.MyMainWindow()
 
@@ -117,6 +117,10 @@ class MyLoginWindow(QMainWindow, Login_Douban_Window.Ui_Form):
         # 根据登陆状态查看是否登陆成功,如果失败显示登陆失败原因
         if login_result_status is not 'failed':
             QMessageBox.information(self, '登陆结果', '登陆成功！' , QMessageBox.Yes)
+            # 设置qss样式
+            styleFile = './qss/style.qss'
+            with open(styleFile, 'r') as f:
+                self.mainwindow.setStyleSheet(f.read())
             self.mainwindow.show()
         else :
             QMessageBox.warning(self, '登陆结果', login_result_description, QMessageBox.Yes)
