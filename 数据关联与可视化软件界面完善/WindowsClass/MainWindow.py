@@ -77,6 +77,10 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
         # 爬取按钮和搜索评论首页相关联
         self.spider_btn.clicked.connect(lambda :self.search_film_page())
 
+        # 初始化进度条
+        self.progressBar.setValue(0)
+        self.progressBar.setRange(0, 100)
+
     # 左侧菜单栏与中间副菜单栏关联
     def switch_stack(self):
         try:
@@ -102,6 +106,10 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
     def search_film_page(self, folder = '电影搜索记录'):
         # 初始化爬取进度显示框
         self.show_spider_detail.setText('')
+        QApplication.processEvents()
+        # 初始化进度条
+        self.processcount = 0
+        self.progressBar.setValue(0)
         QApplication.processEvents()
         # 初始化当前爬取页面
         self.count_page = 1
@@ -243,11 +251,15 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
                              '用户评论': user_comments, '用户评论时间': user_comments_time
                              })
                 self.user_all.append(user)
+                self.processcount += 1
+                # 设置进度条显示
+                now = self.processcount * 100 / 500
+                self.progressBar.setValue(round(now))
                 QApplication.processEvents()
             # 设置间隔时间防止被封
             time.sleep(random.randint(2, 4))
-            self.show_spider_detail.append("第" + str(self.count_page) + "页的评论爬取完毕!")
-            QApplication.processEvents()
+        self.show_spider_detail.append("第" + str(self.count_page) + "页评论爬取完毕!")
+        QApplication.processEvents()
         """
         # 检查是否有下一页
         next_url = filmcommentsdetails_soup.find('a', class_='next')

@@ -29,5 +29,4 @@ if __name__ == '__main__':
     # 显示主界面
     mymainwindow.show()
 
-
     sys.exit(app.exec_())

@@ -124,3 +124,5 @@ class MyLoginWindow(QMainWindow, Login_Douban_Window.Ui_Form):
             self.mainwindow.show()
         else :
             QMessageBox.warning(self, '登陆结果', login_result_description, QMessageBox.Yes)
+
+    """词云"""
