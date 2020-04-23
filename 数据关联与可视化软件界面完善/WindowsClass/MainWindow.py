@@ -1,12 +1,17 @@
 from PyQt5.QtWidgets import QMainWindow ,QMessageBox ,QApplication
-from Windows import Main_Window
+from pyecharts.charts import Geo , Map , Line , Bar, Pie, Page, ThemeRiver
+from pyecharts import options as opts
 from WindowsClass import ExportWindow
+from Windows import Main_Window
 import configparser    # 存储用户信息表
 from bs4 import BeautifulSoup
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 from scrapy import Selector
+from pandas import DataFrame
+from snownlp import SnowNLP
 from PIL import Image
+import pandas as pd
 import collections
 import numpy as np
 import requests
@@ -18,6 +23,8 @@ import json
 import ssl
 import os
 import re
+
+
 
 
 
@@ -90,6 +97,13 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
 
         # 词云制作按钮
         self.ciyun.clicked.connect(lambda :self.make_wordcloud())
+        # 用户全国分布
+        self.city.clicked.connect(lambda :self.city_distribute())
+        # 情感分析图
+        self.emotion_analysis.clicked.connect(lambda :self.sentiment_analysis())
+        # 评论推荐度与日期分析
+        self.comment_columnar.clicked.connect(lambda :self.scoring_trend_analysis())
+
 
     # 左侧菜单栏与中间副菜单栏关联
     def switch_stack(self):
@@ -339,3 +353,183 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
         # 保存绘制好的词云图，比下面程序显示更清晰
         wc.to_file(r"./爬虫数据关联可视化/" + self.filmname + "影评可视化数据/wordcloud.png")
         print("保存完毕")
+
+    """用户分布图"""
+    def city_distribute(self):
+        with open(r'./用户影评相关数据/' + self.filmname + '用户影评相关信息.json', 'r', encoding='UTF-8') as f:
+            t1 = json.load(f, strict=False)
+        provience_dic = {"北京": 12, "天津": 2, "河北": 1, "山西": 0, "内蒙古": 0, "辽宁": 0, "吉林": 0, "黑龙江": 0, "上海": 14, "江苏": 10,
+                         "浙江": 15,
+                         "安徽": 1, "福建": 1, "江西": 0, "山东": 6, "河南": 2, "湖北": 6, "湖南": 5, "广东": 9, "广西": 0, "海南": 3,
+                         "重庆": 2, "四川": 4,
+                         "贵州": 0, "云南": 0, "西藏": 0, "陕西": 0, "甘肃": 0, "青海": 0, "宁夏": 0, "新疆": 0, "香港": 0, "澳门": 0,
+                         "台湾": 0}
+
+        for each in t1:
+            provience_dic[each['用户位置']] += 1
+
+        loacl_list = []
+
+        # 将数据处理成 echarts 能处理的形式
+        for z in provience_dic:
+            list1 = []
+            list1.append(z)
+            list1.append(provience_dic[z])
+            loacl_list.append(list1)
+        c = (
+            Map()
+                .add("用户数", loacl_list, "china")
+                .set_global_opts(
+                title_opts=opts.TitleOpts(title="Map-VisualMap（分段型）"),
+                visualmap_opts=opts.VisualMapOpts(max_=200, is_piecewise=True),
+            )
+                .render("./爬虫数据关联可视化/" + self.filmname +"影评可视化数据/map_visualmap_piecewise.html")
+        )
+
+    """情感分析图"""
+    def sentiment_analysis(self):
+        with open(r'./用户影评相关数据/' + self.filmname + '用户影评相关信息.json', 'r', encoding='UTF-8') as f:
+            t1 = json.load(f, strict=False)
+        # 取出里面的数据
+        comment_list = []
+        for each in t1:
+            comment_list.append(each['用户评论'])
+        # 存储情感数据
+        sentimentslist = []
+        for i in comment_list:
+            s = round(SnowNLP(i).sentiments, 2)
+            sentimentslist.append(s)
+        # 对数据进行处理,计算出各个得分的个数
+        result = {}
+        for i in set(sentimentslist):
+            result[i] = sentimentslist.count(i)
+        info = sorted(result.items(), key=lambda x: x[0], reverse=False)  # dict的排序方法
+        attr, val = [], []
+        for each in info[:-1]:
+            attr.append(str(each[0]))
+            val.append(each[1])
+        c = (
+            Line()
+                .add_xaxis(attr)
+                .add_yaxis(
+                "评论情感分析折线图",
+                val,
+                markpoint_opts=opts.MarkPointOpts(
+                    data=[opts.MarkPointItem()]
+                ),
+                is_smooth=True,
+            )
+                .set_global_opts(title_opts=opts.TitleOpts(title="评论情感分析折线图"))
+                .render("./爬虫数据关联可视化/" + self.filmname +"影评可视化数据/line_markpoint_custom.html")
+        )
+
+    # 评论推荐度与日期分析
+    def scoring_trend_analysis(self):
+        with open(r'./用户影评相关数据/' + self.filmname + '用户影评相关信息.json', 'r', encoding='UTF-8') as f:
+            t1 = json.load(f, strict=False)
+        # 取出里面的评分数据
+        score, date, val, command_date_list = [], [], [], []
+        result = {}
+        for each in t1:
+            command_date_list.append((each['用户推荐度'], each['用户评论时间']))
+        # 数出各个日期各个得分的数量
+        for i in set(list(command_date_list)):
+            result[i] = command_date_list.count(i)  # dict类型
+        info = []
+        # 将计数好的数据重新打包
+        for key in result:
+            score = key[0]
+            date = key[1]
+            val = result[key]
+            info.append([score, date, val])
+        info_new = DataFrame(info)
+        # 将字典转换成为数据框
+        info_new.columns = ['score', 'date', 'votes']
+        # 按日期升序排列df
+        info_new.sort_values('date', inplace=True)
+        # 插入空缺的数据，每个日期的评分类型应该有5中，依次遍历判断是否存在，若不存在则往新的df中插入新数值
+        mark = 0
+        creat_df = pd.DataFrame(columns=['score', 'date', 'votes'])  # 创建空的dataframe
+        for i in list(info_new['date']):
+            location = info_new[(info_new.date == i) & (info_new.score == "力荐")].index.tolist()
+            if location == []:
+                creat_df.loc[mark] = ["力荐", i, 0]
+                mark += 1
+            location = info_new[(info_new.date == i) & (info_new.score == "推荐")].index.tolist()
+            if location == []:
+                creat_df.loc[mark] = ["推荐", i, 0]
+                mark += 1
+            location = info_new[(info_new.date == i) & (info_new.score == "还行")].index.tolist()
+            if location == []:
+                creat_df.loc[mark] = ["还行", i, 0]
+                mark += 1
+            location = info_new[(info_new.date == i) & (info_new.score == "较差")].index.tolist()
+            if location == []:
+                creat_df.loc[mark] = ["较差", i, 0]
+                mark += 1
+            location = info_new[(info_new.date == i) & (info_new.score == "很差")].index.tolist()
+            if location == []:
+                creat_df.loc[mark] = ["很差", i, 0]
+                mark += 1
+        info_new = info_new.append(creat_df.drop_duplicates(), ignore_index=True)
+        command_date_list = []
+        info_new.sort_values('date', inplace=True)  # 按日期升序排列df，便于找最早date和最晚data，方便后面插值
+        for index, row in info_new.iterrows():
+            command_date_list.append([row['date'], row['votes'], row['score']])
+        # 河流图
+        tr = (
+            ThemeRiver()
+                .add(
+                series_name=['力荐', '推荐', '还行', '较差', '很差'],
+                data=command_date_list,
+                singleaxis_opts=opts.SingleAxisOpts(
+                    pos_top="50", pos_bottom="50", type_="time"
+                ),
+            )
+                .set_global_opts(
+                tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="line"),
+                datazoom_opts=[opts.DataZoomOpts(), opts.DataZoomOpts(type_="inside")]
+            )
+                .render("./爬虫数据关联可视化/" + self.filmname +"影评可视化数据/theme_river.html")
+        )
+
+        # 柱状图
+        attr, v1, v2, v3, v4, v5 = [], [], [], [], [], []
+        attr = list(sorted(set(info_new['date'])))
+        for i in attr:
+            v1.append(int(info_new[(info_new['date'] == i) & (info_new['score'] == "力荐")]['votes']))
+            v2.append(int(info_new[(info_new['date'] == i) & (info_new['score'] == "推荐")]['votes']))
+            v3.append(int(info_new[(info_new['date'] == i) & (info_new['score'] == "还行")]['votes']))
+            v4.append(int(info_new[(info_new['date'] == i) & (info_new['score'] == "较差")]['votes']))
+            v5.append(int(info_new[(info_new['date'] == i) & (info_new['score'] == "很差")]['votes']))
+        b = (
+            Bar()
+                .add_xaxis(attr)
+                .add_yaxis("力荐", v1, stack="stack1")
+                .add_yaxis("推荐", v2, stack="stack1")
+                .add_yaxis("还行", v3, stack="stack1")
+                .add_yaxis("较差", v4, stack="stack1")
+                .add_yaxis("很差", v5, stack="stack1")
+                .reversal_axis()
+                .set_series_opts(label_opts=opts.LabelOpts(is_show=False))
+                .set_global_opts(
+                title_opts=opts.TitleOpts(title=self.filmname + "用户评论推荐度表"),
+                datazoom_opts=[opts.DataZoomOpts(), opts.DataZoomOpts(type_="inside")],
+            )
+                .render("./爬虫数据关联可视化/" + self.filmname +"影评可视化数据/bar_reversal_axis.html")
+        )
+        # 折线图
+        l = (
+            Line()
+                .add_xaxis(attr)
+                .add_yaxis("力荐", v1, stack="stack1")
+                .add_yaxis("推荐", v2, stack="stack1")
+                .add_yaxis("还行", v3, stack="stack1")
+                .add_yaxis("较差", v4, stack="stack1")
+                .add_yaxis("很差", v5, stack="stack1")
+                .set_global_opts(
+                title_opts=opts.TitleOpts(title=self.filmname + "推荐度折线表"),
+                datazoom_opts=[opts.DataZoomOpts(), opts.DataZoomOpts(type_="inside")],
+            )
+                .render("./爬虫数据关联可视化/" + self.filmname +"影评可视化数据/line_markpoint.html")
+        )
