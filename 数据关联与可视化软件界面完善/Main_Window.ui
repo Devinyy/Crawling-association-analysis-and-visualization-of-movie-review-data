@@ -534,7 +534,7 @@ color:rgb(0,0,0);</string>
        <x>0</x>
        <y>0</y>
        <width>681</width>
-       <height>611</height>
+       <height>551</height>
       </rect>
      </property>
      <property name="url" stdset="0">
@@ -742,6 +742,16 @@ color: rgb(255, 255, 255);</string>
      </property>
      <property name="autoExclusive">
       <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QTextBrowser" name="textBrowser">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>570</y>
+       <width>671</width>
+       <height>41</height>
+      </rect>
      </property>
     </widget>
    </widget>

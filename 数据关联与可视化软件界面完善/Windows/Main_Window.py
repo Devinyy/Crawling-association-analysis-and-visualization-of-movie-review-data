@@ -231,7 +231,7 @@ class Ui_MainWindow(object):
         self.imform_visual_interface = QtWidgets.QWidget()
         self.imform_visual_interface.setObjectName("imform_visual_interface")
         self.webView = QtWebEngineWidgets.QWebEngineView(self.imform_visual_interface)
-        self.webView.setGeometry(QtCore.QRect(0, 0, 681, 611))
+        self.webView.setGeometry(QtCore.QRect(0, 0, 681, 551))
         self.webView.setProperty("url", QtCore.QUrl(None))
         self.webView.setObjectName("webView")
         self.ciyun = QtWidgets.QPushButton(self.imform_visual_interface)
@@ -313,6 +313,9 @@ class Ui_MainWindow(object):
         self.comment_river.setChecked(True)
         self.comment_river.setAutoExclusive(True)
         self.comment_river.setObjectName("comment_river")
+        self.textBrowser = QtWidgets.QTextBrowser(self.imform_visual_interface)
+        self.textBrowser.setGeometry(QtCore.QRect(10, 570, 671, 41))
+        self.textBrowser.setObjectName("textBrowser")
         self.stackedWidget_2.addWidget(self.imform_visual_interface)
 
         self.retranslateUi(MainWindow)

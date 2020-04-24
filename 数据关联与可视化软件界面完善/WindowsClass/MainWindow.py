@@ -1,13 +1,14 @@
 from PyQt5.QtWidgets import QMainWindow ,QMessageBox ,QApplication
-from pyecharts.charts import Geo , Map , Line , Bar, Pie, Page, ThemeRiver
+from PyQt5.QtCore import QUrl
+from pyecharts.charts import Map , Line , Bar, ThemeRiver
+from pyecharts.options import ComponentTitleOpts
 from pyecharts import options as opts
+from pyecharts.components import Image as Image1
 from WindowsClass import ExportWindow
 from Windows import Main_Window
 import configparser    # 存储用户信息表
 from bs4 import BeautifulSoup
 from wordcloud import WordCloud
-import matplotlib.pyplot as plt
-from scrapy import Selector
 from pandas import DataFrame
 from snownlp import SnowNLP
 from PIL import Image
@@ -20,7 +21,6 @@ import urllib
 import jieba
 import time
 import json
-import ssl
 import os
 import re
 
@@ -102,8 +102,12 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
         # 情感分析图
         self.emotion_analysis.clicked.connect(lambda :self.sentiment_analysis())
         # 评论推荐度与日期分析
-        self.comment_columnar.clicked.connect(lambda :self.scoring_trend_analysis())
-
+        # 柱状图
+        self.comment_columnar.clicked.connect(lambda :self.scoring_trend_analysis( flag = '1'))
+        # 折线图
+        self.comment_polyline.clicked.connect(lambda :self.scoring_trend_analysis( flag = '2'))
+        # 河流图
+        self.comment_river.clicked.connect(lambda :self.scoring_trend_analysis( flag = '3' ))
 
     # 左侧菜单栏与中间副菜单栏关联
     def switch_stack(self):
@@ -172,9 +176,9 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
                 for each in explored_data:
                     f.write(str(each) + "\n")
             # 在读取出的搜索数据中选取第一项将提取链接信息
-            filmdetails_url = explored_data[0]['url']
+            filmdetails_url = explored_data[1]['url']
             # 爬取的电影名
-            self.filmname = explored_data[0]['title']
+            self.filmname = explored_data[1]['title']
             # 爬取相关电影全部评论的url
             filmdetails_html = self.s.get(url=filmdetails_url, headers=self.headers)
             filmdetails_soup = BeautifulSoup(filmdetails_html.content, 'html5lib')
@@ -305,6 +309,8 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
             os.mkdir(r'./爬虫数据关联可视化/' + self.filmname + '影评可视化数据')
         with open(r'./用户影评相关数据/' + self.filmname + '用户影评相关信息.json', 'r', encoding='UTF-8') as f:
             t1 = json.load(f, strict=False)
+        self.textBrowser.append("开始生成" + self.filmname + "的词云图......")
+        QApplication.processEvents()
         # 取出所有评论的信息用字符串来存储
         comment_str = ''
         for each in t1:
@@ -313,11 +319,9 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
         cut_text = jieba.cut(comment_str)
         result = ' '.join(cut_text)
         object_list1 = []
-        try:
-            while (cut_text.__next__()):
-                object_list1.append(cut_text.__next__())
-        except StopIteration:
-            pass
+        for each in cut_text:
+            object_list1.append(each)
+
         object_list = []
         # 自定义去除词库
         remove_words = [u'的', u'，', u'和', u'是', u'随着', u'对于', u'对', u'等', u'能', u'都', u'。', u' ', u'、', u'中', u'在',
@@ -352,13 +356,33 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
         wc.generate(result)
         # 保存绘制好的词云图，比下面程序显示更清晰
         wc.to_file(r"./爬虫数据关联可视化/" + self.filmname + "影评可视化数据/wordcloud.png")
-        print("保存完毕")
+        # 生成词云html
+        image = Image1()
+        path = os.getcwd()
+        img_src = (
+            "file:///" + path + "\爬虫数据关联可视化\\" + self.filmname + "影评可视化数据\wordcloud.png"
+        )
+        image.add(
+            src=img_src,
+            style_opts={"width": "665px", "height": "500px", "style": "margin-top: 20px"},
+        )
+        image.set_global_opts(
+            title_opts=ComponentTitleOpts(title = self.filmname + "词云"),
+        )
+        image.render("./爬虫数据关联可视化/" + self.filmname +"影评可视化数据/wordcloud.html")
+        self.textBrowser.append(self.filmname + "的词云图生成完毕！")
+        QApplication.processEvents()
+        self.show_wordcloud()
+        QApplication.processEvents()
+
 
     """用户分布图"""
     def city_distribute(self):
         with open(r'./用户影评相关数据/' + self.filmname + '用户影评相关信息.json', 'r', encoding='UTF-8') as f:
             t1 = json.load(f, strict=False)
-        provience_dic = {"北京": 12, "天津": 2, "河北": 1, "山西": 0, "内蒙古": 0, "辽宁": 0, "吉林": 0, "黑龙江": 0, "上海": 14, "江苏": 10,
+        self.textBrowser.append("开始生成" + self.filmname + "的用户分布图......")
+        QApplication.processEvents()
+        provience_dic = {"北京": 20, "天津": 2, "河北": 1, "山西": 0, "内蒙古": 0, "辽宁": 0, "吉林": 0, "黑龙江": 0, "上海": 25, "江苏": 10,
                          "浙江": 15,
                          "安徽": 1, "福建": 1, "江西": 0, "山东": 6, "河南": 2, "湖北": 6, "湖南": 5, "广东": 9, "广西": 0, "海南": 3,
                          "重庆": 2, "四川": 4,
@@ -377,19 +401,30 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
             list1.append(provience_dic[z])
             loacl_list.append(list1)
         c = (
-            Map()
+            Map(init_opts=opts.InitOpts(width="665px", height="500px"))
                 .add("用户数", loacl_list, "china")
                 .set_global_opts(
-                title_opts=opts.TitleOpts(title="Map-VisualMap（分段型）"),
-                visualmap_opts=opts.VisualMapOpts(max_=200, is_piecewise=True),
+                title_opts=opts.TitleOpts(title="用户分布图"),
+                toolbox_opts=opts.ToolboxOpts(
+                    is_show=True,
+                    pos_right="30%",
+                ),
+                visualmap_opts=opts.VisualMapOpts(max_=70, is_piecewise=True),
+                tooltip_opts=opts.TooltipOpts(is_show=True),
             )
                 .render("./爬虫数据关联可视化/" + self.filmname +"影评可视化数据/map_visualmap_piecewise.html")
         )
+        self.textBrowser.append( self.filmname + "的用户分布图生成完毕！")
+        QApplication.processEvents()
+        self.show_city_distribute()
+        QApplication.processEvents()
 
     """情感分析图"""
     def sentiment_analysis(self):
         with open(r'./用户影评相关数据/' + self.filmname + '用户影评相关信息.json', 'r', encoding='UTF-8') as f:
             t1 = json.load(f, strict=False)
+        self.textBrowser.append("开始生成" + self.filmname + "的情感分析图......")
+        QApplication.processEvents()
         # 取出里面的数据
         comment_list = []
         for each in t1:
@@ -409,7 +444,7 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
             attr.append(str(each[0]))
             val.append(each[1])
         c = (
-            Line()
+            Line(init_opts=opts.InitOpts(width="665px", height="500px"))
                 .add_xaxis(attr)
                 .add_yaxis(
                 "评论情感分析折线图",
@@ -419,14 +454,34 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
                 ),
                 is_smooth=True,
             )
-                .set_global_opts(title_opts=opts.TitleOpts(title="评论情感分析折线图"))
+                .set_global_opts(
+                    tooltip_opts=opts.TooltipOpts(is_show=True),
+                    toolbox_opts=opts.ToolboxOpts(
+                        is_show=True,
+                        pos_right="30%",
+                    ),
+                    title_opts=opts.TitleOpts(title="评论情感分析折线图"))
                 .render("./爬虫数据关联可视化/" + self.filmname +"影评可视化数据/line_markpoint_custom.html")
         )
+        self.textBrowser.append(self.filmname + "的情感分析图生成完毕！")
+        QApplication.processEvents()
+        self.show_sentiment_analysis()
+        QApplication.processEvents()
 
     # 评论推荐度与日期分析
-    def scoring_trend_analysis(self):
+    def scoring_trend_analysis(self , flag ):
+        choose = flag
         with open(r'./用户影评相关数据/' + self.filmname + '用户影评相关信息.json', 'r', encoding='UTF-8') as f:
             t1 = json.load(f, strict=False)
+        if choose == '1':
+            self.textBrowser.append("开始生成" + self.filmname + "的评论推荐度与日期分析柱状图......")
+            QApplication.processEvents()
+        if choose == '2':
+            self.textBrowser.append("开始生成" + self.filmname + "的评论推荐度与日期分析折线图......")
+            QApplication.processEvents()
+        if choose == '3':
+            self.textBrowser.append("开始生成" + self.filmname + "的评论推荐度与日期分析河状图......")
+            QApplication.processEvents()
         # 取出里面的评分数据
         score, date, val, command_date_list = [], [], [], []
         result = {}
@@ -476,24 +531,6 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
         info_new.sort_values('date', inplace=True)  # 按日期升序排列df，便于找最早date和最晚data，方便后面插值
         for index, row in info_new.iterrows():
             command_date_list.append([row['date'], row['votes'], row['score']])
-        # 河流图
-        tr = (
-            ThemeRiver()
-                .add(
-                series_name=['力荐', '推荐', '还行', '较差', '很差'],
-                data=command_date_list,
-                singleaxis_opts=opts.SingleAxisOpts(
-                    pos_top="50", pos_bottom="50", type_="time"
-                ),
-            )
-                .set_global_opts(
-                tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="line"),
-                datazoom_opts=[opts.DataZoomOpts(), opts.DataZoomOpts(type_="inside")]
-            )
-                .render("./爬虫数据关联可视化/" + self.filmname +"影评可视化数据/theme_river.html")
-        )
-
-        # 柱状图
         attr, v1, v2, v3, v4, v5 = [], [], [], [], [], []
         attr = list(sorted(set(info_new['date'])))
         for i in attr:
@@ -502,34 +539,117 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
             v3.append(int(info_new[(info_new['date'] == i) & (info_new['score'] == "还行")]['votes']))
             v4.append(int(info_new[(info_new['date'] == i) & (info_new['score'] == "较差")]['votes']))
             v5.append(int(info_new[(info_new['date'] == i) & (info_new['score'] == "很差")]['votes']))
-        b = (
-            Bar()
-                .add_xaxis(attr)
-                .add_yaxis("力荐", v1, stack="stack1")
-                .add_yaxis("推荐", v2, stack="stack1")
-                .add_yaxis("还行", v3, stack="stack1")
-                .add_yaxis("较差", v4, stack="stack1")
-                .add_yaxis("很差", v5, stack="stack1")
-                .reversal_axis()
-                .set_series_opts(label_opts=opts.LabelOpts(is_show=False))
-                .set_global_opts(
-                title_opts=opts.TitleOpts(title=self.filmname + "用户评论推荐度表"),
-                datazoom_opts=[opts.DataZoomOpts(), opts.DataZoomOpts(type_="inside")],
+
+        # 柱状图
+        if choose == '1':
+            b = (
+                Bar(init_opts=opts.InitOpts(width="665px", height="500px"))
+
+                    .add_xaxis(attr)
+                    .add_yaxis("力荐", v1, stack="stack1")
+                    .add_yaxis("推荐", v2, stack="stack1")
+                    .add_yaxis("还行", v3, stack="stack1")
+                    .add_yaxis("较差", v4, stack="stack1")
+                    .add_yaxis("很差", v5, stack="stack1")
+                    .reversal_axis()
+                    .set_series_opts(label_opts=opts.LabelOpts(is_show=False))
+                    .set_global_opts(
+                    tooltip_opts=opts.TooltipOpts(is_show=True),
+                    toolbox_opts=opts.ToolboxOpts(
+                        is_show=True,
+                        pos_right="30%",
+                    ),
+                    title_opts=opts.TitleOpts(title="用户评论推荐度柱状图"),
+                    datazoom_opts=[opts.DataZoomOpts(), opts.DataZoomOpts(type_="inside")],
+                )
+                    .render("./爬虫数据关联可视化/" + self.filmname +"影评可视化数据/bar_reversal_axis.html")
             )
-                .render("./爬虫数据关联可视化/" + self.filmname +"影评可视化数据/bar_reversal_axis.html")
-        )
+            self.textBrowser.append("开始生成" + self.filmname + "的评论推荐度与日期分析柱状图完成！")
+            QApplication.processEvents()
+            self.show_scoring_trend_analysis_columnar()
+            QApplication.processEvents()
+
         # 折线图
-        l = (
-            Line()
-                .add_xaxis(attr)
-                .add_yaxis("力荐", v1, stack="stack1")
-                .add_yaxis("推荐", v2, stack="stack1")
-                .add_yaxis("还行", v3, stack="stack1")
-                .add_yaxis("较差", v4, stack="stack1")
-                .add_yaxis("很差", v5, stack="stack1")
-                .set_global_opts(
-                title_opts=opts.TitleOpts(title=self.filmname + "推荐度折线表"),
-                datazoom_opts=[opts.DataZoomOpts(), opts.DataZoomOpts(type_="inside")],
+        if choose == '2' :
+            l = (
+                Line(init_opts=opts.InitOpts(width="665px", height="500px"))
+                    .add_xaxis(attr)
+                    .add_yaxis("力荐", v1, stack="stack1")
+                    .add_yaxis("推荐", v2, stack="stack1")
+                    .add_yaxis("还行", v3, stack="stack1")
+                    .add_yaxis("较差", v4, stack="stack1")
+                    .add_yaxis("很差", v5, stack="stack1")
+                    .set_global_opts(
+                    tooltip_opts=opts.TooltipOpts(is_show=True),
+                    toolbox_opts=opts.ToolboxOpts(
+                        is_show=True,
+                        pos_right="30%",
+                    ),
+                    title_opts=opts.TitleOpts(title="用户评论推荐度折线图"),
+                    datazoom_opts=[opts.DataZoomOpts(), opts.DataZoomOpts(type_="inside")],
+                )
+                    .render("./爬虫数据关联可视化/" + self.filmname +"影评可视化数据/line_markpoint.html")
             )
-                .render("./爬虫数据关联可视化/" + self.filmname +"影评可视化数据/line_markpoint.html")
-        )
+            self.textBrowser.append(self.filmname + "的评论推荐度与日期分析折线图完成！")
+            QApplication.processEvents()
+            self.show_scoring_trend_analysis_polyline()
+            QApplication.processEvents()
+
+        # 河流图
+        if choose == '3' :
+            tr = (
+                ThemeRiver(init_opts=opts.InitOpts(width="665px", height="500px"))
+                    .add(
+                    series_name=['力荐', '推荐', '还行', '较差', '很差'],
+                    data=command_date_list,
+                    singleaxis_opts=opts.SingleAxisOpts(
+                        pos_top="50", pos_bottom="50", type_="time"
+                    ),
+                )
+                    .set_global_opts(
+                    tooltip_opts=opts.TooltipOpts( is_show=True,trigger="axis", axis_pointer_type="line"),
+                    toolbox_opts=opts.ToolboxOpts(
+                        is_show=True,
+                        pos_right="30%",
+                    ),
+                    title_opts=opts.TitleOpts(title="推荐度河流图"),
+                    datazoom_opts=[opts.DataZoomOpts(), opts.DataZoomOpts(type_="inside")]
+                )
+                    .render("./爬虫数据关联可视化/" + self.filmname +"影评可视化数据/theme_river.html")
+            )
+            self.textBrowser.append(self.filmname + "的评论推荐度与日期分析河状图完成！")
+            QApplication.processEvents()
+            self.show_scoring_trend_analysis_river()
+            QApplication.processEvents()
+
+
+    # 显示词云图
+    def show_wordcloud(self):
+        self.webView.load(QUrl('file:///'+r'./爬虫数据关联可视化/'+self.filmname+'影评可视化数据/wordcloud.html'))
+        self.webView.show()
+
+    # 显示城市分布图
+    def show_city_distribute(self):
+        self.webView.load(QUrl('file:///'+r'./爬虫数据关联可视化/'+self.filmname+'影评可视化数据/map_visualmap_piecewise.html'))
+        self.webView.show()
+
+    # 显示情感分析图
+    def show_sentiment_analysis(self):
+        self.webView.load(QUrl('file:///'+r'./爬虫数据关联可视化/'+self.filmname+'影评可视化数据/line_markpoint_custom.html'))
+        self.webView.show()
+
+    # 显示评论推荐度与日期分析柱状图
+    def show_scoring_trend_analysis_columnar(self):
+        self.webView.load(QUrl('file:///'+r'./爬虫数据关联可视化/'+self.filmname+'影评可视化数据/bar_reversal_axis.html'))
+        self.webView.show()
+
+    # 显示评论推荐度与日期分析折线图
+    def show_scoring_trend_analysis_polyline(self):
+        self.webView.load(QUrl('file:///'+r'./爬虫数据关联可视化/'+self.filmname+'影评可视化数据/line_markpoint.html'))
+        self.webView.show()
+
+    # 显示评论推荐度与日期分析河状图
+    def show_scoring_trend_analysis_river(self):
+        self.webView.load(QUrl('file:///'+r'./爬虫数据关联可视化/'+self.filmname+'影评可视化数据/theme_river.html'))
+        self.webView.show()
+
