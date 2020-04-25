@@ -1,14 +1,19 @@
-from PyQt5.QtWidgets import QMainWindow ,QMessageBox ,QApplication
+from PyQt5.QtWidgets import QMainWindow ,QMessageBox ,QApplication, QFileDialog
 from PyQt5.QtCore import QUrl
 from pyecharts.charts import Map , Line , Bar, ThemeRiver
 from pyecharts.options import ComponentTitleOpts
 from pyecharts import options as opts
 from pyecharts.components import Image as Image1
+# 导入输出图片工具
+from pyecharts.render import make_snapshot as makesnapshot
+# 使用snapshot-selenium 渲染图片
+from snapshot_selenium import snapshot
 from WindowsClass import ExportWindow
 from Windows import Main_Window
 import configparser    # 存储用户信息表
 from bs4 import BeautifulSoup
 from wordcloud import WordCloud
+from PIL import Image as Image2
 from pandas import DataFrame
 from snownlp import SnowNLP
 from PIL import Image
@@ -108,6 +113,11 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
         self.comment_polyline.clicked.connect(lambda :self.scoring_trend_analysis( flag = '2'))
         # 河流图
         self.comment_river.clicked.connect(lambda :self.scoring_trend_analysis( flag = '3' ))
+
+        # 保存图片按钮
+        self.save_btn.clicked.connect(lambda :self.save_now_image())
+        # 保存图表的区分标志
+        self.saveflag = '0'
 
     # 左侧菜单栏与中间副菜单栏关联
     def switch_stack(self):
@@ -321,7 +331,6 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
         object_list1 = []
         for each in cut_text:
             object_list1.append(each)
-
         object_list = []
         # 自定义去除词库
         remove_words = [u'的', u'，', u'和', u'是', u'随着', u'对于', u'对', u'等', u'能', u'都', u'。', u' ', u'、', u'中', u'在',
@@ -332,7 +341,6 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
             if word not in remove_words:  # 如果不在去除词库中
                 object_list.append(word)  # 分词追加到列表
         # 词频统计
-        word_counts = collections.Counter(object_list)
         alice_mask = np.array(Image.open(r"./mask.png"))
         # 生成词云图
         wc = WordCloud(
@@ -370,6 +378,8 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
             title_opts=ComponentTitleOpts(title = self.filmname + "词云"),
         )
         image.render("./爬虫数据关联可视化/" + self.filmname +"影评可视化数据/wordcloud.html")
+        QApplication.processEvents()
+        self.saveflag = '1'
         self.textBrowser.append(self.filmname + "的词云图生成完毕！")
         QApplication.processEvents()
         self.show_wordcloud()
@@ -414,6 +424,21 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
             )
                 .render("./爬虫数据关联可视化/" + self.filmname +"影评可视化数据/map_visualmap_piecewise.html")
         )
+        QApplication.processEvents()
+        self.city_pic = (
+            Map(init_opts=opts.InitOpts(width="665px", height="500px"))
+            .add("用户数", loacl_list, "china")
+            .set_global_opts(
+                title_opts=opts.TitleOpts(title="用户分布图"),
+                toolbox_opts=opts.ToolboxOpts(
+                    is_show=True,
+                    pos_right="30%",
+                ),
+                visualmap_opts=opts.VisualMapOpts(max_=70, is_piecewise=True),
+                tooltip_opts=opts.TooltipOpts(is_show=True),
+            )
+        )
+        self.saveflag = '2'
         self.textBrowser.append( self.filmname + "的用户分布图生成完毕！")
         QApplication.processEvents()
         self.show_city_distribute()
@@ -443,7 +468,7 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
         for each in info[:-1]:
             attr.append(str(each[0]))
             val.append(each[1])
-        c = (
+        e = (
             Line(init_opts=opts.InitOpts(width="665px", height="500px"))
                 .add_xaxis(attr)
                 .add_yaxis(
@@ -463,6 +488,28 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
                     title_opts=opts.TitleOpts(title="评论情感分析折线图"))
                 .render("./爬虫数据关联可视化/" + self.filmname +"影评可视化数据/line_markpoint_custom.html")
         )
+        QApplication.processEvents()
+        self.emotion_pic = (
+            Line(init_opts=opts.InitOpts(width="665px", height="500px"))
+            .add_xaxis(attr)
+            .add_yaxis(
+            "评论情感分析折线图",
+                val,
+                markpoint_opts=opts.MarkPointOpts(
+                    data=[opts.MarkPointItem()]
+                ),
+                is_smooth=True,
+            )
+            .set_global_opts(
+                tooltip_opts=opts.TooltipOpts(is_show=True),
+                toolbox_opts=opts.ToolboxOpts(
+                    is_show=True,
+                    pos_right="30%",
+                ),
+                title_opts=opts.TitleOpts(title="评论情感分析折线图")
+            )
+        )
+        self.saveflag = '3'
         self.textBrowser.append(self.filmname + "的情感分析图生成完毕！")
         QApplication.processEvents()
         self.show_sentiment_analysis()
@@ -542,7 +589,7 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
 
         # 柱状图
         if choose == '1':
-            b = (
+            c = (
                 Bar(init_opts=opts.InitOpts(width="665px", height="500px"))
 
                     .add_xaxis(attr)
@@ -560,10 +607,33 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
                         pos_right="30%",
                     ),
                     title_opts=opts.TitleOpts(title="用户评论推荐度柱状图"),
-                    datazoom_opts=[opts.DataZoomOpts(), opts.DataZoomOpts(type_="inside")],
+                    datazoom_opts=opts.DataZoomOpts(type_="inside",range_start=0,range_end= 100),
                 )
                     .render("./爬虫数据关联可视化/" + self.filmname +"影评可视化数据/bar_reversal_axis.html")
             )
+            QApplication.processEvents()
+            self.comment_columnar_pic = (
+                Bar(init_opts=opts.InitOpts(width="665px", height="500px"))
+
+                    .add_xaxis(attr)
+                    .add_yaxis("力荐", v1, stack="stack1")
+                    .add_yaxis("推荐", v2, stack="stack1")
+                    .add_yaxis("还行", v3, stack="stack1")
+                    .add_yaxis("较差", v4, stack="stack1")
+                    .add_yaxis("很差", v5, stack="stack1")
+                    .reversal_axis()
+                    .set_series_opts(label_opts=opts.LabelOpts(is_show=False))
+                    .set_global_opts(
+                    tooltip_opts=opts.TooltipOpts(is_show=True),
+                    toolbox_opts=opts.ToolboxOpts(
+                        is_show=True,
+                        pos_right="30%",
+                    ),
+                    title_opts=opts.TitleOpts(title="用户评论推荐度柱状图"),
+                    datazoom_opts=opts.DataZoomOpts(type_="inside",range_start=0,range_end= 100),
+                )
+            )
+            self.saveflag = '4'
             self.textBrowser.append("开始生成" + self.filmname + "的评论推荐度与日期分析柱状图完成！")
             QApplication.processEvents()
             self.show_scoring_trend_analysis_columnar()
@@ -571,7 +641,7 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
 
         # 折线图
         if choose == '2' :
-            l = (
+            polyline = (
                 Line(init_opts=opts.InitOpts(width="665px", height="500px"))
                     .add_xaxis(attr)
                     .add_yaxis("力荐", v1, stack="stack1")
@@ -586,10 +656,30 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
                         pos_right="30%",
                     ),
                     title_opts=opts.TitleOpts(title="用户评论推荐度折线图"),
-                    datazoom_opts=[opts.DataZoomOpts(), opts.DataZoomOpts(type_="inside")],
+                    datazoom_opts=opts.DataZoomOpts(type_="inside",range_start=0,range_end= 100),
                 )
                     .render("./爬虫数据关联可视化/" + self.filmname +"影评可视化数据/line_markpoint.html")
             )
+            QApplication.processEvents()
+            self.comment_polyline_pic = (
+                Line(init_opts=opts.InitOpts(width="665px", height="500px"))
+                    .add_xaxis(attr)
+                    .add_yaxis("力荐", v1, stack="stack1")
+                    .add_yaxis("推荐", v2, stack="stack1")
+                    .add_yaxis("还行", v3, stack="stack1")
+                    .add_yaxis("较差", v4, stack="stack1")
+                    .add_yaxis("很差", v5, stack="stack1")
+                    .set_global_opts(
+                    tooltip_opts=opts.TooltipOpts(is_show=True),
+                    toolbox_opts=opts.ToolboxOpts(
+                        is_show=True,
+                        pos_right="30%",
+                    ),
+                    title_opts=opts.TitleOpts(title="用户评论推荐度折线图"),
+                    datazoom_opts=opts.DataZoomOpts(type_="inside",range_start=0,range_end= 100),
+                )
+            )
+            self.saveflag = '5'
             self.textBrowser.append(self.filmname + "的评论推荐度与日期分析折线图完成！")
             QApplication.processEvents()
             self.show_scoring_trend_analysis_polyline()
@@ -597,7 +687,7 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
 
         # 河流图
         if choose == '3' :
-            tr = (
+            river = (
                 ThemeRiver(init_opts=opts.InitOpts(width="665px", height="500px"))
                     .add(
                     series_name=['力荐', '推荐', '还行', '较差', '很差'],
@@ -613,10 +703,31 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
                         pos_right="30%",
                     ),
                     title_opts=opts.TitleOpts(title="推荐度河流图"),
-                    datazoom_opts=[opts.DataZoomOpts(), opts.DataZoomOpts(type_="inside")]
+                    datazoom_opts=opts.DataZoomOpts(type_="inside",range_start=0,range_end= 100),
                 )
                     .render("./爬虫数据关联可视化/" + self.filmname +"影评可视化数据/theme_river.html")
             )
+            QApplication.processEvents()
+            self.comment_river_pic = (
+                ThemeRiver(init_opts=opts.InitOpts(width="665px", height="500px"))
+                    .add(
+                    series_name=['力荐', '推荐', '还行', '较差', '很差'],
+                    data=command_date_list,
+                    singleaxis_opts=opts.SingleAxisOpts(
+                        pos_top="50", pos_bottom="50", type_="time"
+                    ),
+                )
+                    .set_global_opts(
+                    tooltip_opts=opts.TooltipOpts(is_show=True, trigger="axis", axis_pointer_type="line"),
+                    toolbox_opts=opts.ToolboxOpts(
+                        is_show=True,
+                        pos_right="30%",
+                    ),
+                    title_opts=opts.TitleOpts(title="推荐度河流图"),
+                    datazoom_opts=opts.DataZoomOpts(type_="inside",range_start=0,range_end= 100),
+                )
+            )
+            self.saveflag = '6'
             self.textBrowser.append(self.filmname + "的评论推荐度与日期分析河状图完成！")
             QApplication.processEvents()
             self.show_scoring_trend_analysis_river()
@@ -653,3 +764,45 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
         self.webView.load(QUrl('file:///'+r'./爬虫数据关联可视化/'+self.filmname+'影评可视化数据/theme_river.html'))
         self.webView.show()
 
+    # 保存当前图像函数
+    def save_now_image(self):
+        self.textBrowser.append("正在保存当前图片......")
+        QApplication.processEvents()
+        if self.saveflag == '0' :
+            pass
+        else :
+            QApplication.processEvents()
+            # 选择保存路径
+            save_path = ''
+            picname, ok2 = QFileDialog.getSaveFileName(self,"文件保存","C:/",
+                                                        "PNG 文件 (*.png);;JPG 文件 (*.jpg);;All Files (*)")
+            if ok2 == 'PNG 文件 (*.png)':
+                save_path = picname + '.png'
+            if ok2 == 'JPG 文件 (*.jpg)':
+                save_path = picname + '.jpg'
+            if ok2 == 'All Files (*)':
+                save_path = picname
+            QApplication.processEvents()
+
+            if self.saveflag == '1' :
+                # 输出保存为图片
+                img = Image2.open(r"./爬虫数据关联可视化/" + self.filmname + "影评可视化数据/wordcloud.png")
+                img.save(save_path)
+            elif self.saveflag == '2' :
+                # 输出保存为图片
+                makesnapshot(snapshot, self.city_pic.render(), save_path)
+            elif self.saveflag == '3' :
+                # 输出保存为图片
+                makesnapshot(snapshot, self.emotion_pic.render(), save_path)
+            elif self.saveflag == '4' :
+                # 输出保存为图片
+                makesnapshot(snapshot, self.comment_columnar_pic.render(), save_path)
+            elif self.saveflag == '5' :
+                # 输出保存为图片
+                makesnapshot(snapshot, self.comment_polyline_pic.render(), save_path)
+            elif self.saveflag == '6' :
+                # 输出保存为图片
+                makesnapshot(snapshot, self.comment_river_pic.render(), save_path)
+            QApplication.processEvents()
+        self.textBrowser.append("保存当前图片成功！")
+        QApplication.processEvents()

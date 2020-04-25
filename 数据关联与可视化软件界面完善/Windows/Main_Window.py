@@ -181,6 +181,12 @@ class Ui_MainWindow(object):
         self.film_text.setObjectName("film_text")
         self.spider_btn = QtWidgets.QPushButton(self.get_imform_interface)
         self.spider_btn.setGeometry(QtCore.QRect(270, 190, 151, 41))
+        font = QtGui.QFont()
+        font.setFamily("焦糖奶茶")
+        font.setPointSize(14)
+        font.setBold(True)
+        font.setWeight(75)
+        self.spider_btn.setFont(font)
         self.spider_btn.setStyleSheet("background:rgb(255, 85, 127);\n"
 "border-radius:15px;\n"
 "color:rgb(0,0,0);")
@@ -231,7 +237,7 @@ class Ui_MainWindow(object):
         self.imform_visual_interface = QtWidgets.QWidget()
         self.imform_visual_interface.setObjectName("imform_visual_interface")
         self.webView = QtWebEngineWidgets.QWebEngineView(self.imform_visual_interface)
-        self.webView.setGeometry(QtCore.QRect(0, 0, 681, 551))
+        self.webView.setGeometry(QtCore.QRect(0, 0, 681, 561))
         self.webView.setProperty("url", QtCore.QUrl(None))
         self.webView.setObjectName("webView")
         self.ciyun = QtWidgets.QPushButton(self.imform_visual_interface)
@@ -314,8 +320,22 @@ class Ui_MainWindow(object):
         self.comment_river.setAutoExclusive(True)
         self.comment_river.setObjectName("comment_river")
         self.textBrowser = QtWidgets.QTextBrowser(self.imform_visual_interface)
-        self.textBrowser.setGeometry(QtCore.QRect(10, 570, 671, 41))
+        self.textBrowser.setGeometry(QtCore.QRect(10, 570, 451, 31))
         self.textBrowser.setObjectName("textBrowser")
+        self.save_btn = QtWidgets.QPushButton(self.imform_visual_interface)
+        self.save_btn.setGeometry(QtCore.QRect(470, 570, 211, 31))
+        font = QtGui.QFont()
+        font.setFamily("焦糖奶茶")
+        font.setPointSize(16)
+        self.save_btn.setFont(font)
+        self.save_btn.setStyleSheet("background:rgb(255, 85, 127);\n"
+"border-radius:15px;\n"
+"color: rgb(255, 255, 255);")
+        self.save_btn.setCheckable(True)
+        self.save_btn.setChecked(True)
+        self.save_btn.setAutoRepeat(False)
+        self.save_btn.setAutoExclusive(True)
+        self.save_btn.setObjectName("save_btn")
         self.stackedWidget_2.addWidget(self.imform_visual_interface)
 
         self.retranslateUi(MainWindow)
@@ -351,5 +371,6 @@ class Ui_MainWindow(object):
         self.comment_columnar.setText(_translate("MainWindow", "评论推荐度柱状"))
         self.comment_polyline.setText(_translate("MainWindow", "评论推荐度折线"))
         self.comment_river.setText(_translate("MainWindow", "评论推荐度河状"))
+        self.save_btn.setText(_translate("MainWindow", "保存显示图像"))
 from PyQt5 import QtWebEngineWidgets
 import images_rc

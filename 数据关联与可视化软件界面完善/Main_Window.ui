@@ -413,6 +413,14 @@
        <height>41</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <family>焦糖奶茶</family>
+       <pointsize>14</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
      <property name="styleSheet">
       <string notr="true">background:rgb(255, 85, 127);
 border-radius:15px;
@@ -534,7 +542,7 @@ color:rgb(0,0,0);</string>
        <x>0</x>
        <y>0</y>
        <width>681</width>
-       <height>551</height>
+       <height>561</height>
       </rect>
      </property>
      <property name="url" stdset="0">
@@ -749,9 +757,45 @@ color: rgb(255, 255, 255);</string>
       <rect>
        <x>10</x>
        <y>570</y>
-       <width>671</width>
-       <height>41</height>
+       <width>451</width>
+       <height>31</height>
       </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="save_btn">
+     <property name="geometry">
+      <rect>
+       <x>470</x>
+       <y>570</y>
+       <width>211</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>焦糖奶茶</family>
+       <pointsize>16</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background:rgb(255, 85, 127);
+border-radius:15px;
+color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="text">
+      <string>保存显示图像</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+     <property name="autoRepeat">
+      <bool>false</bool>
+     </property>
+     <property name="autoExclusive">
+      <bool>true</bool>
      </property>
     </widget>
    </widget>
