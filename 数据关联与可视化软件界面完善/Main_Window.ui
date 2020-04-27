@@ -389,7 +389,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>130</y>
+       <y>120</y>
        <width>641</width>
        <height>41</height>
       </rect>
@@ -408,7 +408,7 @@
      <property name="geometry">
       <rect>
        <x>270</x>
-       <y>190</y>
+       <y>180</y>
        <width>151</width>
        <height>41</height>
       </rect>
@@ -427,16 +427,16 @@ border-radius:15px;
 color:rgb(0,0,0);</string>
      </property>
      <property name="text">
-      <string>确认并爬取</string>
+      <string>搜索</string>
      </property>
     </widget>
     <widget class="QLabel" name="title_2">
      <property name="geometry">
       <rect>
-       <x>260</x>
-       <y>250</y>
+       <x>270</x>
+       <y>480</y>
        <width>171</width>
-       <height>31</height>
+       <height>21</height>
       </rect>
      </property>
      <property name="font">
@@ -457,8 +457,8 @@ color:rgb(0,0,0);</string>
     <widget class="QLabel" name="title_3">
      <property name="geometry">
       <rect>
-       <x>190</x>
-       <y>300</y>
+       <x>200</x>
+       <y>510</y>
        <width>321</width>
        <height>21</height>
       </rect>
@@ -482,9 +482,9 @@ color:rgb(0,0,0);</string>
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>330</y>
+       <y>540</y>
        <width>641</width>
-       <height>321</height>
+       <height>131</height>
       </rect>
      </property>
     </widget>
@@ -492,13 +492,116 @@ color:rgb(0,0,0);</string>
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>670</y>
+       <y>680</y>
        <width>651</width>
        <height>23</height>
       </rect>
      </property>
      <property name="value">
       <number>24</number>
+     </property>
+    </widget>
+    <widget class="QTextBrowser" name="choose_film">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>270</y>
+       <width>641</width>
+       <height>161</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="title_4">
+     <property name="geometry">
+      <rect>
+       <x>290</x>
+       <y>240</y>
+       <width>111</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>焦糖奶茶</family>
+       <pointsize>16</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="text">
+      <string>搜索结果</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="film_text_2">
+     <property name="geometry">
+      <rect>
+       <x>390</x>
+       <y>440</y>
+       <width>151</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>焦糖奶茶</family>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="spider_btn_2">
+     <property name="geometry">
+      <rect>
+       <x>560</x>
+       <y>440</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>焦糖奶茶</family>
+       <pointsize>14</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background:rgb(255, 85, 127);
+border-radius:15px;
+color:rgb(0,0,0);</string>
+     </property>
+     <property name="text">
+      <string>爬取</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="title_5">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>440</y>
+       <width>351</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>焦糖奶茶</family>
+       <pointsize>16</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="text">
+      <string>请输入您想爬取的电影编号：</string>
      </property>
     </widget>
    </widget>

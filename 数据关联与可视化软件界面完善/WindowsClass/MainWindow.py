@@ -18,7 +18,6 @@ from pandas import DataFrame
 from snownlp import SnowNLP
 from PIL import Image
 import pandas as pd
-import collections
 import numpy as np
 import requests
 import random
@@ -95,6 +94,7 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
         ]
         # 爬取按钮和搜索评论首页相关联
         self.spider_btn.clicked.connect(lambda :self.search_film_page())
+        self.spider_btn_2.clicked.connect(lambda: self.search_film_page_next())
 
         # 初始化进度条
         self.progressBar.setValue(0)
@@ -172,9 +172,10 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
             filmname_html = self.s.get(url, headers=self.headers).content
             # 将json格式转化为文件python格式
             try:
-                explored_data = json.loads(filmname_html)
+                self.explored_data = json.loads(filmname_html)
             except (json.decoder.JSONDecodeError):
                 QMessageBox.warning(self, '注意!', "账号异常可能被封，请前往更改密码后重试", QMessageBox.Yes)
+            QApplication.processEvents()
             # 创建文件夹
             if os.path.exists(folder):
                 os.chdir(folder)
@@ -183,42 +184,69 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
                 os.chdir(folder)
             # 创建搜索电影的txt文件
             with open(self.filmname + '.txt', 'w') as f:
-                for each in explored_data:
+                for each in self.explored_data:
                     f.write(str(each) + "\n")
-            # 在读取出的搜索数据中选取第一项将提取链接信息
-            filmdetails_url = explored_data[1]['url']
-            # 爬取的电影名
-            self.filmname = explored_data[1]['title']
-            # 爬取相关电影全部评论的url
-            filmdetails_html = self.s.get(url=filmdetails_url, headers=self.headers)
-            filmdetails_soup = BeautifulSoup(filmdetails_html.content, 'html5lib')
-            for tag in filmdetails_soup.find_all('div', id=re.compile('comments-section')):
-                tag1 = tag.find_all('span', class_='pl')
-                for tag2 in tag1:
-                    filmcomments_url = tag2.find('a').get('href')
-            # 爬取该电影的评论首页
-            self.filmcomments_url = filmcomments_url[:-8] + filmcomments_url[-8:]
-            # 爬取该电影的网址前相同的部位
-            self.url_head = filmcomments_url[:-9]
-            # 存储爬取到的信息的列表
-            self.user_all = []
-            # 显示爬取的电影名的信息
-            self.show_spider_detail.append('即将爬取：'+self.filmname)
             QApplication.processEvents()
-            self.show_spider_detail.append(self.filmname + '的网址为' + self.filmcomments_url)
+            # 将搜索栏清空
+            self.choose_film.setText('')
             QApplication.processEvents()
-            self.show_spider_detail.append("开始爬取" + self.filmname + "的评论......")
-            QApplication.processEvents()
-            self.get_imformation_pre()
+            # 将所有爬取到的信息都显示在屏幕上
+            for i in range(len(self.explored_data)):
+                self.choose_film.append("编号：" + str(i+1))
+                self.choose_film.append(self.explored_data[i]['title'])
+                self.choose_film.append(self.explored_data[i]['url'])
+                self.choose_film.append('--------------------------------------------------')
+                QApplication.processEvents()
+            # 初始化路径
+            os.chdir('../')
         else:
-            QMessageBox.warning(self, '注意!', "您未输入爬取的电影名称", QMessageBox.Yes)
+            QMessageBox.warning(self, '注意!', "您未输入搜索的电影名称", QMessageBox.Yes)
+
+    """爬取输入的电影url的影评"""
+    def search_film_page_next(self):
+        # 置空
+        self.show_spider_detail.setText('')
+        QApplication.processEvents()
+        # 取出用户输入的编号
+        if self.film_text_2.text() in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']:
+            bianhao = int(self.film_text_2.text()) - 1
+        else:
+            QMessageBox.warning(self, '注意!', "请输入正确的编号!", QMessageBox.Yes)
+        # 在读取出的搜索数据中选取第一项将提取链接信息
+        filmdetails_url = self.explored_data[bianhao]['url']
+        # 爬取的电影名
+        self.filmname = self.explored_data[bianhao]['title']
+        # 爬取相关电影全部评论的url
+        filmdetails_html = self.s.get(url=filmdetails_url, headers=self.headers)
+        filmdetails_soup = BeautifulSoup(filmdetails_html.content, 'html5lib')
+        for tag in filmdetails_soup.find_all('div', id=re.compile('comments-section')):
+            tag1 = tag.find_all('span', class_='pl')
+            for tag2 in tag1:
+                filmcomments_url = tag2.find('a').get('href')
+        # 爬取该电影的评论首页
+        self.filmcomments_url = filmcomments_url[:-8] + filmcomments_url[-8:]
+        # 爬取该电影的网址前相同的部位
+        self.url_head = filmcomments_url[:-9]
+        # 存储爬取到的信息的列表
+        self.user_all = []
+        # 显示爬取的电影名的信息
+        QApplication.processEvents()
+        self.show_spider_detail.append('即将爬取：' + self.filmname)
+        QApplication.processEvents()
+        self.show_spider_detail.append(self.filmname + '的网址为' + self.filmcomments_url)
+        QApplication.processEvents()
+        self.show_spider_detail.append("开始爬取" + self.filmname + "的评论......")
+        QApplication.processEvents()
+        self.get_imformation_pre()
 
     """爬取影评准备工作"""
     def get_imformation_pre(self):
+
         # 进入数据存储文件夹 检查是否已经存在此文件 存在则不必再次爬取
-        os.chdir(r'../用户影评相关数据')
+        os.chdir(r'./用户影评相关数据')
         if os.path.exists(self.filmname + '用户影评相关信息.json'):
             QMessageBox.warning(self, '注意!', "已爬取过此电影的影评,请直接进行可视化！", QMessageBox.Yes)
+            self.show_spider_detail.append("已爬取过" + self.filmname + "的评论......")
             with open(self.filmname + '用户影评相关信息.json', 'r', encoding='UTF-8') as f:
                 self.imform_display.setText(f.read())
             # 初始化路径
