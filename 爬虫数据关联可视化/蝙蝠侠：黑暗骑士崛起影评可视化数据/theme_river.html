@@ -7,11 +7,11 @@
 
 </head>
 <body>
-    <div id="c01654263a734a5e8739684d977f097c" class="chart-container" style="width:900px; height:500px;"></div>
+    <div id="14890ed1a9d44aa09f59ccd374913fd9" class="chart-container" style="width:665px; height:500px;"></div>
     <script>
-        var chart_c01654263a734a5e8739684d977f097c = echarts.init(
-            document.getElementById('c01654263a734a5e8739684d977f097c'), 'white', {renderer: 'canvas'});
-        var option_c01654263a734a5e8739684d977f097c = {
+        var chart_14890ed1a9d44aa09f59ccd374913fd9 = echarts.init(
+            document.getElementById('14890ed1a9d44aa09f59ccd374913fd9'), 'white', {renderer: 'canvas'});
+        var option_14890ed1a9d44aa09f59ccd374913fd9 = {
     "animation": true,
     "animationThreshold": 2000,
     "animationDuration": 1000,
@@ -89,8 +89,8 @@
                 ],
                 [
                     "2012-07-19",
-                    1,
-                    "\u8fd8\u884c"
+                    3,
+                    "\u63a8\u8350"
                 ],
                 [
                     "2012-07-19",
@@ -99,8 +99,8 @@
                 ],
                 [
                     "2012-07-19",
-                    3,
-                    "\u63a8\u8350"
+                    1,
+                    "\u8fd8\u884c"
                 ],
                 [
                     "2012-07-19",
@@ -116,11 +116,6 @@
                     "2012-07-20",
                     0,
                     "\u8f83\u5dee"
-                ],
-                [
-                    "2012-07-20",
-                    1,
-                    "\u63a8\u8350"
                 ],
                 [
                     "2012-07-20",
@@ -130,12 +125,17 @@
                 [
                     "2012-07-20",
                     1,
-                    ""
+                    "\u8fd8\u884c"
                 ],
                 [
                     "2012-07-20",
                     1,
-                    "\u8fd8\u884c"
+                    "\u63a8\u8350"
+                ],
+                [
+                    "2012-07-20",
+                    1,
+                    ""
                 ],
                 [
                     "2012-07-21",
@@ -230,12 +230,12 @@
                 [
                     "2012-07-26",
                     1,
-                    "\u8f83\u5dee"
+                    "\u529b\u8350"
                 ],
                 [
                     "2012-07-26",
                     1,
-                    "\u529b\u8350"
+                    "\u8f83\u5dee"
                 ],
                 [
                     "2012-08-02",
@@ -255,12 +255,17 @@
                 [
                     "2012-08-02",
                     1,
-                    "\u8fd8\u884c"
+                    "\u529b\u8350"
                 ],
                 [
                     "2012-08-02",
                     1,
-                    "\u529b\u8350"
+                    "\u8fd8\u884c"
+                ],
+                [
+                    "2012-08-27",
+                    2,
+                    "\u63a8\u8350"
                 ],
                 [
                     "2012-08-27",
@@ -269,11 +274,6 @@
                 ],
                 [
                     "2012-08-27",
-                    2,
-                    "\u63a8\u8350"
-                ],
-                [
-                    "2012-08-27",
                     0,
                     "\u5f88\u5dee"
                 ],
@@ -344,13 +344,23 @@
                 ],
                 [
                     "2012-09-04",
-                    26,
-                    ""
+                    2,
+                    "\u5f88\u5dee"
                 ],
                 [
                     "2012-09-04",
                     166,
                     "\u63a8\u8350"
+                ],
+                [
+                    "2012-09-04",
+                    26,
+                    ""
+                ],
+                [
+                    "2012-09-04",
+                    14,
+                    "\u8f83\u5dee"
                 ],
                 [
                     "2012-09-04",
@@ -363,19 +373,9 @@
                     "\u8fd8\u884c"
                 ],
                 [
-                    "2012-09-04",
-                    2,
-                    "\u5f88\u5dee"
-                ],
-                [
-                    "2012-09-04",
-                    14,
-                    "\u8f83\u5dee"
-                ],
-                [
                     "2012-09-05",
-                    6,
-                    "\u8fd8\u884c"
+                    12,
+                    "\u63a8\u8350"
                 ],
                 [
                     "2012-09-05",
@@ -389,8 +389,8 @@
                 ],
                 [
                     "2012-09-05",
-                    12,
-                    "\u63a8\u8350"
+                    6,
+                    "\u8fd8\u884c"
                 ],
                 [
                     "2012-09-05",
@@ -452,32 +452,53 @@
     },
     "title": [
         {
+            "text": "\u63a8\u8350\u5ea6\u6cb3\u6d41\u56fe",
             "padding": 5,
             "itemGap": 10
         }
     ],
-    "dataZoom": [
-        {
-            "show": true,
-            "type": "slider",
-            "realtime": true,
-            "start": 20,
-            "end": 80,
-            "orient": "horizontal",
-            "zoomLock": false
-        },
-        {
-            "show": true,
-            "type": "inside",
-            "realtime": true,
-            "start": 20,
-            "end": 80,
-            "orient": "horizontal",
-            "zoomLock": false
+    "toolbox": {
+        "show": true,
+        "orient": "horizontal",
+        "itemSize": 15,
+        "itemGap": 10,
+        "left": "80%",
+        "right": "30%",
+        "feature": {
+            "saveAsImage": {
+                "show": true,
+                "title": "save as image",
+                "type": "png"
+            },
+            "restore": {
+                "show": true,
+                "title": "restore"
+            },
+            "dataView": {
+                "show": true,
+                "title": "data view",
+                "readOnly": false
+            },
+            "dataZoom": {
+                "show": true,
+                "title": {
+                    "zoom": "data zoom",
+                    "back": "data zoom restore"
+                }
+            }
         }
-    ]
+    },
+    "dataZoom": {
+        "show": true,
+        "type": "inside",
+        "realtime": true,
+        "start": 0,
+        "end": 100,
+        "orient": "horizontal",
+        "zoomLock": false
+    }
 };
-        chart_c01654263a734a5e8739684d977f097c.setOption(option_c01654263a734a5e8739684d977f097c);
+        chart_14890ed1a9d44aa09f59ccd374913fd9.setOption(option_14890ed1a9d44aa09f59ccd374913fd9);
     </script>
 </body>
 </html>

@@ -7,11 +7,11 @@
 
 </head>
 <body>
-    <div id="db85d72643684a5599a8402ac79a1cf3" class="chart-container" style="width:900px; height:500px;"></div>
+    <div id="82b5c3d687d94f72a983bfb92ca7c6b7" class="chart-container" style="width:665px; height:500px;"></div>
     <script>
-        var chart_db85d72643684a5599a8402ac79a1cf3 = echarts.init(
-            document.getElementById('db85d72643684a5599a8402ac79a1cf3'), 'white', {renderer: 'canvas'});
-        var option_db85d72643684a5599a8402ac79a1cf3 = {
+        var chart_82b5c3d687d94f72a983bfb92ca7c6b7 = echarts.init(
+            document.getElementById('82b5c3d687d94f72a983bfb92ca7c6b7'), 'white', {renderer: 'canvas'});
+        var option_82b5c3d687d94f72a983bfb92ca7c6b7 = {
     "animation": true,
     "animationThreshold": 2000,
     "animationDuration": 1000,
@@ -306,33 +306,53 @@
     ],
     "title": [
         {
-            "text": "\u8759\u8760\u4fa0\uff1a\u9ed1\u6697\u9a91\u58eb\u5d1b\u8d77\u7528\u6237\u8bc4\u8bba\u63a8\u8350\u5ea6\u8868",
+            "text": "\u7528\u6237\u8bc4\u8bba\u63a8\u8350\u5ea6\u67f1\u72b6\u56fe",
             "padding": 5,
             "itemGap": 10
         }
     ],
-    "dataZoom": [
-        {
-            "show": true,
-            "type": "slider",
-            "realtime": true,
-            "start": 20,
-            "end": 80,
-            "orient": "horizontal",
-            "zoomLock": false
-        },
-        {
-            "show": true,
-            "type": "inside",
-            "realtime": true,
-            "start": 20,
-            "end": 80,
-            "orient": "horizontal",
-            "zoomLock": false
+    "toolbox": {
+        "show": true,
+        "orient": "horizontal",
+        "itemSize": 15,
+        "itemGap": 10,
+        "left": "80%",
+        "right": "30%",
+        "feature": {
+            "saveAsImage": {
+                "show": true,
+                "title": "save as image",
+                "type": "png"
+            },
+            "restore": {
+                "show": true,
+                "title": "restore"
+            },
+            "dataView": {
+                "show": true,
+                "title": "data view",
+                "readOnly": false
+            },
+            "dataZoom": {
+                "show": true,
+                "title": {
+                    "zoom": "data zoom",
+                    "back": "data zoom restore"
+                }
+            }
         }
-    ]
+    },
+    "dataZoom": {
+        "show": true,
+        "type": "inside",
+        "realtime": true,
+        "start": 0,
+        "end": 100,
+        "orient": "horizontal",
+        "zoomLock": false
+    }
 };
-        chart_db85d72643684a5599a8402ac79a1cf3.setOption(option_db85d72643684a5599a8402ac79a1cf3);
+        chart_82b5c3d687d94f72a983bfb92ca7c6b7.setOption(option_82b5c3d687d94f72a983bfb92ca7c6b7);
     </script>
 </body>
 </html>

@@ -7,11 +7,11 @@
 
 </head>
 <body>
-    <div id="e221940f9c684be4a7c27b8670326977" class="chart-container" style="width:900px; height:500px;"></div>
+    <div id="1342994bb7df4919ada7cde29a7a8cdb" class="chart-container" style="width:665px; height:500px;"></div>
     <script>
-        var chart_e221940f9c684be4a7c27b8670326977 = echarts.init(
-            document.getElementById('e221940f9c684be4a7c27b8670326977'), 'white', {renderer: 'canvas'});
-        var option_e221940f9c684be4a7c27b8670326977 = {
+        var chart_1342994bb7df4919ada7cde29a7a8cdb = echarts.init(
+            document.getElementById('1342994bb7df4919ada7cde29a7a8cdb'), 'white', {renderer: 'canvas'});
+        var option_1342994bb7df4919ada7cde29a7a8cdb = {
     "animation": true,
     "animationThreshold": 2000,
     "animationDuration": 1000,
@@ -624,9 +624,40 @@
             "padding": 5,
             "itemGap": 10
         }
-    ]
+    ],
+    "toolbox": {
+        "show": true,
+        "orient": "horizontal",
+        "itemSize": 15,
+        "itemGap": 10,
+        "left": "80%",
+        "right": "30%",
+        "feature": {
+            "saveAsImage": {
+                "show": true,
+                "title": "save as image",
+                "type": "png"
+            },
+            "restore": {
+                "show": true,
+                "title": "restore"
+            },
+            "dataView": {
+                "show": true,
+                "title": "data view",
+                "readOnly": false
+            },
+            "dataZoom": {
+                "show": true,
+                "title": {
+                    "zoom": "data zoom",
+                    "back": "data zoom restore"
+                }
+            }
+        }
+    }
 };
-        chart_e221940f9c684be4a7c27b8670326977.setOption(option_e221940f9c684be4a7c27b8670326977);
+        chart_1342994bb7df4919ada7cde29a7a8cdb.setOption(option_1342994bb7df4919ada7cde29a7a8cdb);
     </script>
 </body>
 </html>
