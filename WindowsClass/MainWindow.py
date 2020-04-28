@@ -60,13 +60,14 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
             'remember': 'false',
             'ticket': ''
         }
+
         # 填入账号和密码
         data['name'] = user_account
         data['password'] = user_password
         # 保持登陆的session
         self.s = requests.session()# 获取登录结果（类型为 bytes）
         self.s.post(url=url_basic, headers=ua_headers, data=data)
-
+        print(json.loads(self.s.post(url=url_basic, headers=ua_headers, data=data).content))
         # 左侧菜单与中间副菜单绑定
         self.listWidget.itemClicked.connect(lambda:self.switch_stack())
         # 中间副菜单栏按钮与右侧显示栏关联

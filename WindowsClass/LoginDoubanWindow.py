@@ -98,7 +98,6 @@ class MyLoginWindow(QMainWindow, Login_Douban_Window.Ui_Form):
             # 写入config.ini文件
             with open('user_imformation.ini', 'w') as f:
                 conf.write(f)
-
         # 获取用户填入的账号和密码
         data['name'] = self.accounttext.text()
         if data['name'] is '':
@@ -107,15 +106,17 @@ class MyLoginWindow(QMainWindow, Login_Douban_Window.Ui_Form):
         if data['password'] is '':
             QMessageBox.information(self, '登陆结果', '请输入密码！' , QMessageBox.Yes)
         # 保持登陆的session
-        self.s = requests.session()
+        self.s = requests.session()  # 获取登录结果（类型为 bytes）
+        self.s.post(url=url_basic, headers=ua_headers, data=data)
         # 获取登录结果（类型为 bytes）
         login_result = self.s.post(url=url_basic, headers=ua_headers, data=data).content
         # 将登录结果转化为
         login_result_zip = json.loads(login_result)
         login_result_status = login_result_zip['status']
         login_result_description = login_result_zip['description']
+        print(login_result_zip)
         # 根据登陆状态查看是否登陆成功,如果失败显示登陆失败原因
-        if login_result_status is not 'failed':
+        if login_result_status != 'failed':
             QMessageBox.information(self, '登陆结果', '登陆成功！' , QMessageBox.Yes)
             # 设置qss样式
             styleFile = './qss/style.qss'
@@ -124,5 +125,3 @@ class MyLoginWindow(QMainWindow, Login_Douban_Window.Ui_Form):
             self.mainwindow.show()
         else :
             QMessageBox.warning(self, '登陆结果', login_result_description, QMessageBox.Yes)
-
-    """词云"""
