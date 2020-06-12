@@ -174,6 +174,7 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
             # 将json格式转化为文件python格式
             try:
                 self.explored_data = json.loads(filmname_html)
+                print(self.explored_data)
             except (json.decoder.JSONDecodeError):
                 QMessageBox.warning(self, '注意!', "账号异常可能被封，请前往更改密码后重试", QMessageBox.Yes)
             QApplication.processEvents()
@@ -186,7 +187,11 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
             # 创建搜索电影的txt文件
             with open(self.filmname + '.txt', 'w') as f:
                 for each in self.explored_data:
-                    f.write(str(each) + "\n")
+                    try :
+                        f.write(str(each) + "\n")
+                    except Exception as e:
+                        print(e)
+                        print("1")
             QApplication.processEvents()
             # 将搜索栏清空
             self.choose_film.setText('')
@@ -242,7 +247,6 @@ class MyMainWindow(QMainWindow, Main_Window.Ui_MainWindow ):
 
     """爬取影评准备工作"""
     def get_imformation_pre(self):
-
         # 进入数据存储文件夹 检查是否已经存在此文件 存在则不必再次爬取
         os.chdir(r'./用户影评相关数据')
         if os.path.exists(self.filmname + '用户影评相关信息.json'):

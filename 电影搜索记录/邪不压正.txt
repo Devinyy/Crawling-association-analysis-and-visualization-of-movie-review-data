@@ -1,0 +1,1 @@
+{'episode': '', 'img': 'https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2526297221.jpg', 'title': '邪不压正', 'url': 'https://movie.douban.com/subject/26366496/?suggest=%E9%82%AA%E4%B8%8D%E5%8E%8B%E6%AD%A3', 'type': 'movie', 'year': '2018', 'sub_title': '邪不压正', 'id': '26366496'}

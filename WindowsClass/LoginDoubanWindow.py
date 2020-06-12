@@ -1,4 +1,3 @@
-import os
 from PyQt5.QtWidgets import QMainWindow, QMessageBox
 from Windows import Login_Douban_Window
 from WindowsClass import MainWindow
@@ -114,7 +113,6 @@ class MyLoginWindow(QMainWindow, Login_Douban_Window.Ui_Form):
         login_result_zip = json.loads(login_result)
         login_result_status = login_result_zip['status']
         login_result_description = login_result_zip['description']
-        print(login_result_zip)
         # 根据登陆状态查看是否登陆成功,如果失败显示登陆失败原因
         if login_result_status != 'failed':
             QMessageBox.information(self, '登陆结果', '登陆成功！' , QMessageBox.Yes)
